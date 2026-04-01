@@ -21,11 +21,11 @@ class RealEstateDataGenerator:
             lon = np.random.uniform(-74, -73)
             
             # Price factors
-            sqft = np.random.normal(2000, 800)
+            sqft = max(800, np.random.normal(2000, 800))  # Minimum 800 sqft
             bedrooms = np.random.choice([1, 2, 3, 4, 5])
             bathrooms = bathroom_count = np.random.poisson(2) + 1
             year_built = np.random.randint(1950, 2024)
-            lot_size = np.random.lognormal(4, 1.5)
+            lot_size = max(1000, np.random.lognormal(4, 1.5))  # Minimum 1000
             
             # Market factors
             neighborhood_multiplier = {'Downtown': 1.3, 'Waterfront': 1.5, 'Tech Hub': 1.4, 'Historic': 0.9, 'Suburbs': 0.8}[neighborhood]
@@ -87,3 +87,7 @@ class RealEstateModel:
     
     def save(self, path):
         joblib.dump(self, path)
+    
+    @staticmethod
+    def load(path):
+        return joblib.load(path)

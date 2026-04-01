@@ -7,9 +7,13 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.model import RealEstateModel
 
-st.set_page_config(page_title="Real Estate", icon="🏠", layout="wide")
-df = pd.read_csv('data/properties.csv')
-model = RealEstateModel.load('data/model.pkl') if Path('data/model.pkl').exists() else None
+st.set_page_config(page_title="Real Estate", page_icon="🏠", layout="wide")
+
+@st.cache_data
+def load_data():
+    return pd.read_csv('data/properties.csv')
+
+df = load_data()
 
 st.title("🏠 Real Estate Price Analytics")
 col1, col2, col3 = st.columns(3)
@@ -25,6 +29,7 @@ with col2:
     fig = px.box(df, x='neighborhood', y='price', title='Price by Neighborhood',color='neighborhood')
     st.plotly_chart(fig, use_container_width=True)
 
-fig = px.scatter_geo(df, lat='latitude', lon='longitude', color='price', size='sqft', 
-                     hover_data=['bedrooms', 'price'], title='Property Map')
+fig = px.scatter_geo(df, lat='latitude', lon='longitude', color='price', size='lot_size', 
+                     hover_data=['bedrooms', 'price', 'sqft'], title='Property Map by Location',
+                     size_max=30)
 st.plotly_chart(fig, use_container_width=True)
